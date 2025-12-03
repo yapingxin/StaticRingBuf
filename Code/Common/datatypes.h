@@ -3,7 +3,7 @@
  *  @file     Common/datatypes.h                                             *
  *  @brief    Common data types definitions.                                 *
  *                                                                           *
- *  @author   Yaping Xin <xinyp@live.com>                                    *
+ *  @author   Yaping Xin                                                     *
  *  @link     https://github.com/yapingxin                                   *
  *  @version  0.1.0.0                                                        *
  *  @date     2025-12-03                                                     *
