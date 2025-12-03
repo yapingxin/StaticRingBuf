@@ -1,5 +1,4 @@
 ﻿/*****************************************************************************
- *                                                                           *
  *  @file     Common/datatypes.h                                             *
  *  @brief    Common data types definitions.                                 *
  *                                                                           *
@@ -7,7 +6,7 @@
  *  @link     https://github.com/yapingxin                                   *
  *  @version  0.1.0.0                                                        *
  *  @date     2025-12-03                                                     *
- *                                                                           *
+ *---------------------------------------------------------------------------*
  *  Copyright 2025 Yaping Xin                                                *
  *                                                                           *
  *  Licensed under the Apache License, Version 2.0 (the "License");          *
@@ -21,7 +20,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. *
  *  See the License for the specific language governing permissions and      *
  *  limitations under the License.                                           *
- *                                                                           *
  *---------------------------------------------------------------------------*
  *  Change History :                                                         *
  *---------------------------------------------------------------------------*
