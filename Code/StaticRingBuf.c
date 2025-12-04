@@ -76,7 +76,11 @@ EXIT:
     return rc;
 }
 
-/** @details Reset the attributes of the StaticRingBuf instance, release dynamically created buffer memory space. */
+/** @brief   Release the StaticRingBuf instance.
+ *  @details Reset the attributes of the StaticRingBuf instance, release dynamically created buffer memory space.
+ *
+ *  @param[inout] rbuf The StaticRingBuf instance to be released.
+ */
 void StaticRingBuf_Release(StaticRingBuf* rbuf)
 {
     if (rbuf)
