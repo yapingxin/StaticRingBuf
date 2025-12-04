@@ -1,4 +1,5 @@
-﻿#include <stdlib.h>
+﻿#include <assert.h>
+#include <stdlib.h>
 #include <string.h>
 #include "StaticRingBuf.h"
 
@@ -17,7 +18,7 @@ uint8_t StaticRingBuf_Init(StaticRingBuf* rbuf, const STARB_CAPTYPE _capacity, b
 {
     uint8_t rc = STARB_OK;
 
-    if (rbuf == NULL || _capacity == 0 || _buffer == NULL)
+    if (rbuf == NULL || _capacity <= 0 || _buffer == NULL)
     {
         rc = STARB_PARAM_NULL;
         goto EXIT;
@@ -50,7 +51,7 @@ uint8_t StaticRingBuf_Create(StaticRingBuf* rbuf, const STARB_CAPTYPE _capacity)
     uint8_t rc = STARB_OK;
     size_t bufsz;
 
-    if (rbuf == NULL || _capacity == 0)
+    if (rbuf == NULL || _capacity <= 0)
     {
         rc = STARB_PARAM_NULL;
         goto EXIT;
@@ -91,4 +92,103 @@ void StaticRingBuf_Release(StaticRingBuf* rbuf)
         }
         memset(rbuf, 0, sizeof(StaticRingBuf));
     }
+}
+
+/** @brief Get writing capacity of the StaticRingBuf instance.
+ *
+ *  @param[in] rbuf The StaticRingBuf instance
+ *  @return Writing capacity (bytes)
+ */
+STARB_CAPTYPE StaticRingBuf_GetWriteCapacity(StaticRingBuf* rbuf)
+{
+    assert(rbuf != NULL);
+
+    STARB_CAPTYPE write_capacity;
+    if (rbuf->flag.cycle == 0)
+    {
+        write_capacity =
+            (rbuf->rpos > rbuf->wpos) ?
+            0 :
+            rbuf->capacity - rbuf->wpos + rbuf->rpos;
+    }
+    else
+    {
+        write_capacity =
+            (rbuf->rpos < rbuf->wpos) ?
+            0 :
+            rbuf->rpos - rbuf->wpos;
+    }
+    return write_capacity;
+}
+
+/** @brief Get reading capacity of the StaticRingBuf instance.
+ *
+ *  @param[in] rbuf The StaticRingBuf instance
+ *  @return Reading capacity (bytes)
+ */
+STARB_CAPTYPE StaticRingBuf_GetReadCapacity(StaticRingBuf* rbuf)
+{
+    assert(rbuf != NULL);
+    STARB_CAPTYPE read_capacity;
+    if (rbuf->flag.cycle == 0)
+    {
+        read_capacity =
+            (rbuf->rpos > rbuf->wpos) ?
+            0 :
+            rbuf->wpos - rbuf->rpos;
+    }
+    else
+    {
+        read_capacity =
+            (rbuf->rpos < rbuf->wpos) ?
+            0 :
+            rbuf->capacity - rbuf->rpos + rbuf->wpos;
+    }
+    return read_capacity;
+}
+
+/** @brief Write 1 byte into the StaticRingBuf instance's storage buffer.
+ *
+ *  @param[in] rbuf  The StaticRingBuf instance to be initialized
+ *  @param[in] _elem Logical storage capacity in bytes
+ *
+ *  @retval 1    Executed successfully.
+ *  @retval 0xE1 Failed: Has empty input parameter.
+ *  @retval 0xE3 Failed: Buffer overflow.
+ */
+uint8_t StaticRingBuf_Write(StaticRingBuf* rbuf, const byte _elem)
+{
+    uint8_t rc = STARB_OK;
+
+    if (rbuf == NULL)
+    {
+        rc = STARB_PARAM_NULL;
+        goto EXIT;
+    }
+
+    STARB_CAPTYPE write_capacity = StaticRingBuf_GetWriteCapacity(rbuf);
+    if (write_capacity <= 0)
+    {
+        rc = STARB_BUFOVERFLOW;
+        goto EXIT;
+    }
+
+    rbuf->buffer[rbuf->wpos] = _elem;
+    if ((rbuf->wpos + 1) < rbuf->capacity)
+    {
+        rbuf->buffer[rbuf->wpos + rbuf->capacity] = _elem;
+    }
+
+    if (rbuf->flag.cycle == 0 && (rbuf->wpos + 1) >= rbuf->capacity)
+    {
+        rbuf->flag.cycle = 1;
+        rbuf->wpos = 0;
+    }
+    else
+    {
+        rbuf->wpos++;
+    }
+
+EXIT:
+    return rc;
 }

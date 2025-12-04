@@ -37,6 +37,7 @@
 #define STARB_FAIL          0xE0
 #define STARB_PARAM_NULL    0xE1
 #define STARB_ALLOC_FAIL    0xE2
+#define STARB_BUFOVERFLOW   0xE3
 
 
 /** @brief Datatype redefinition */
@@ -96,6 +97,31 @@ extern "C" {
      *  @param[inout] rbuf The StaticRingBuf instance to be released.
      */
     void StaticRingBuf_Release(StaticRingBuf* rbuf);
+
+    /** @brief Get writing capacity of the StaticRingBuf instance.
+     *
+     *  @param[in] rbuf The StaticRingBuf instance
+     *  @return Writing capacity (bytes)
+     */
+    STARB_CAPTYPE StaticRingBuf_GetWriteCapacity(StaticRingBuf* rbuf);
+
+    /** @brief Get reading capacity of the StaticRingBuf instance.
+     *
+     *  @param[in] rbuf The StaticRingBuf instance
+     *  @return Reading capacity (bytes)
+     */
+    STARB_CAPTYPE StaticRingBuf_GetReadCapacity(StaticRingBuf* rbuf);
+
+    /** @brief Write 1 byte into the StaticRingBuf instance's storage buffer.
+     *
+     *  @param[in] rbuf  The StaticRingBuf instance to be initialized
+     *  @param[in] _elem Logical storage capacity in bytes
+     *
+     *  @retval 1    Executed successfully.
+     *  @retval 0xE1 Failed: Has empty input parameter.
+     *  @retval 0xE3 Failed: Buffer overflow.
+     */
+    uint8_t StaticRingBuf_Write(StaticRingBuf* rbuf, const byte _elem);
 
 #ifdef __cplusplus
 } // ! extern "C"
