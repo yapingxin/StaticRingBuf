@@ -53,3 +53,7 @@ dkms.conf
 
 # debug information files
 *.dwo
+/Build/MSVC/.vs
+/Build/MSVC/IntDir
+/Build/MSVC/Output
+/Build/MSVC/Examples/rbuf_basic/rbuf_basic.vcxproj.user
