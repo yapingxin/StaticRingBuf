@@ -3,8 +3,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "StaticRingBuf.h"
 
 int main()
 {
+    int size = sizeof(STARB_Flag);
     return EXIT_SUCCESS;
 }

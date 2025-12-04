@@ -4,10 +4,24 @@
     <Filter Include="Code">
       <UniqueIdentifier>{35ef7805-9f5d-4185-a626-41f62bd85a25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\Common">
+      <UniqueIdentifier>{ee3e020e-87c7-429c-b0d4-1be27cce1176}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Examples\rbuf_basic\rbuf_basic.c">
       <Filter>Code</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Code\StaticRingBuf.c">
+      <Filter>Code</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\Code\StaticRingBuf.h">
+      <Filter>Code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Code\Common\datatypes.h">
+      <Filter>Code\Common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

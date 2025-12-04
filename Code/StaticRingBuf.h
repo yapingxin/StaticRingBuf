@@ -33,4 +33,68 @@
 
 #include "Common/datatypes.h"
 
+#define STARB_OK            1
+#define STARB_FAIL          0xE0
+#define STARB_PARAM_NULL    0xE1
+#define STARB_ALLOC_FAIL    0xE2
+
+
+/** @brief Datatype redefinition */
+typedef uint16_t STARB_CAPTYPE;
+
+/** @brief Ring buffer flag structure */
+typedef struct _STARB_Flag_t {
+    uint8_t zeros  : 6;
+    uint8_t ownbuf : 1;
+    uint8_t cycle  : 1;
+} STARB_Flag;
+
+/** \brief  Struct definition for the Static Ring Buffer.
+ * \details The Static Ring Buffer is a kind of circular buffer.
+ */
+typedef struct _StaticRingBuf_t
+{
+    byte* buffer;           // Pointer to the physical storage buffer.
+    STARB_CAPTYPE capacity; // Logical storage capacity in bytes.
+    STARB_CAPTYPE wpos;     // Write position index (base 0)
+    STARB_CAPTYPE rpos;     // Read  position index (base 0)
+    STARB_Flag    flag;     // The flag (status)
+
+} StaticRingBuf;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    /** @brief   Initialize the StaticRingBuf instance.
+     *  @details Initialize the StaticRingBuf instance, and link `buffer` to the given existent `_buffer` pointer.
+     *
+     *  @param[out] rbuf     The StaticRingBuf instance to be initialized
+     *  @param[in] _capacity Logical storage capacity in bytes
+     *  @param[in] _buffer   Pointer to the physical storage buffer
+     *
+     *  @retval 1    Executed successfully.
+     *  @retval 0xE1 Failed: Has empty input parameter.
+     */
+    uint8_t StaticRingBuf_Init(StaticRingBuf* rbuf, const STARB_CAPTYPE _capacity, byte* _buffer);
+
+    /** @brief   Initialize the StaticRingBuf instance.
+     *  @details Initialize the StaticRingBuf instance, and dynamically create buffer memory space.
+     *
+     *  @param[out] rbuf     The StaticRingBuf instance to be initialized
+     *  @param[in] _capacity Logical storage capacity in bytes
+     *
+     *  @retval 1    Executed successfully.
+     *  @retval 0xE1 Failed: Has empty input parameter.
+     *  @retval 0xE2 Failed: Dynamically create buffer memory space failed.
+     */
+    uint8_t StaticRingBuf_Create(StaticRingBuf* rbuf, const STARB_CAPTYPE _capacity);
+
+    /** @details Reset the attributes of the StaticRingBuf instance, release dynamically created buffer memory space. */
+    void StaticRingBuf_Release(StaticRingBuf* rbuf);
+
+#ifdef __cplusplus
+} // ! extern "C"
+#endif
+
 #endif // !_INC_GH2025_StaticRingBuf_H
