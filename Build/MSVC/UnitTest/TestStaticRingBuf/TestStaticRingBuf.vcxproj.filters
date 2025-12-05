@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Code">
+      <UniqueIdentifier>{3e21a58b-55af-4efb-8e24-2183b6de0fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Verify">
+      <UniqueIdentifier>{6aa8179c-b472-4dc6-b2a3-8f874393bc32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\Common">
+      <UniqueIdentifier>{e186bc84-ea4b-4292-81ca-4968ebe5b00d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{2613abbc-88e3-4fbb-b866-de3ad72749f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Share">
+      <UniqueIdentifier>{58fbe68b-52a5-408f-9336-755b421bd7db}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\TestStaticRingBuf.c">
+      <Filter>Code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001_Common.c">
+      <Filter>Code\Verify</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001.h">
+      <Filter>Code\Verify</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Common\unistd.h">
+      <Filter>Code\Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\..\..\Code\LibDev\CUnit\ResourceFiles\CUnit-List.dtd">
+      <Filter>Resource\Share</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\..\Code\LibDev\CUnit\ResourceFiles\CUnit-List.xsl">
+      <Filter>Resource\Share</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\..\Code\LibDev\CUnit\ResourceFiles\CUnit-Run.dtd">
+      <Filter>Resource\Share</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\..\Code\LibDev\CUnit\ResourceFiles\CUnit-Run.xsl">
+      <Filter>Resource\Share</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\..\Code\LibDev\CUnit\ResourceFiles\Memory-Dump.dtd">
+      <Filter>Resource\Share</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\..\Code\LibDev\CUnit\ResourceFiles\Memory-Dump.xsl">
+      <Filter>Resource\Share</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
+</Project>

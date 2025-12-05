@@ -58,3 +58,4 @@ dkms.conf
 /Build/MSVC/Output
 /Build/MSVC/Examples/rbuf_basic/rbuf_basic.vcxproj.user
 /Build/MSVC/LibDev/CUnit/CUnit.vcxproj.user
+/Build/MSVC/UnitTest/TestStaticRingBuf/TestStaticRingBuf.vcxproj.user
