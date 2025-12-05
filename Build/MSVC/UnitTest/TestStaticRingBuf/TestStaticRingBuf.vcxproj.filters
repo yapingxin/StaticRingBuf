@@ -16,6 +16,12 @@
     <Filter Include="Resource\Share">
       <UniqueIdentifier>{58fbe68b-52a5-408f-9336-755b421bd7db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code\StaticRingBuf">
+      <UniqueIdentifier>{bce08f97-1f38-4a85-8321-d13f2f8dbef4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code\StaticRingBuf\Common">
+      <UniqueIdentifier>{ec7f7e42-a841-4f1f-816c-8ded689a84ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\TestStaticRingBuf.c">
@@ -24,6 +30,9 @@
     <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001_Common.c">
       <Filter>Code\Verify</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Code\StaticRingBuf.c">
+      <Filter>Code\StaticRingBuf</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001.h">
@@ -31,6 +40,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Common\unistd.h">
       <Filter>Code\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Code\StaticRingBuf.h">
+      <Filter>Code\StaticRingBuf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Code\Common\datatypes.h">
+      <Filter>Code\StaticRingBuf\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

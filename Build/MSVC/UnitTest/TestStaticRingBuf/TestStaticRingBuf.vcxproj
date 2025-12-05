@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../../UnitTest/TestStaticRingBuf;../../../Code/LibDev/CUnit/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../UnitTest/TestStaticRingBuf;../../../Code/LibDev/CUnit/include;../../../../Code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../../UnitTest/TestStaticRingBuf;../../../Code/LibDev/CUnit/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../UnitTest/TestStaticRingBuf;../../../Code/LibDev/CUnit/include;../../../../Code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -126,7 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../../UnitTest/TestStaticRingBuf;../../../Code/LibDev/CUnit/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../UnitTest/TestStaticRingBuf;../../../Code/LibDev/CUnit/include;../../../../Code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -144,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../../UnitTest/TestStaticRingBuf;../../../Code/LibDev/CUnit/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../UnitTest/TestStaticRingBuf;../../../Code/LibDev/CUnit/include;../../../../Code;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -155,10 +155,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\Code\StaticRingBuf.c" />
     <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\TestStaticRingBuf.c" />
     <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001_Common.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Code\Common\datatypes.h" />
+    <ClInclude Include="..\..\..\..\Code\StaticRingBuf.h" />
     <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Common\unistd.h" />
     <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001.h" />
   </ItemGroup>
