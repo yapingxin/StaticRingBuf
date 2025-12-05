@@ -13,6 +13,7 @@ extern "C" {
     void TC0001_STARB_Create_Release(void);
     void TC0002_STARB_Init_Release(void);
     void TC0003_STARB_Write1Byte(void);
+    void TC0004_STARB_TestCapBound_Write(void);
 
 #ifdef __cplusplus
 } // ! extern "C"

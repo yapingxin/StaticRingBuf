@@ -52,6 +52,7 @@ int main(int argc, char* argv[])
     CU_ADD_TEST(suite_0001, TC0001_STARB_Create_Release);
     CU_ADD_TEST(suite_0001, TC0002_STARB_Init_Release);
     CU_ADD_TEST(suite_0001, TC0003_STARB_Write1Byte);
+    CU_ADD_TEST(suite_0001, TC0004_STARB_TestCapBound_Write);
 
     switch (run_mode)
     {

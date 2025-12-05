@@ -177,10 +177,10 @@ uint8_t StaticRingBuf_Write(StaticRingBuf* rbuf, const byte _elem)
 #if STARB_TD_COPYMIRRORATLAST == 0
     if ((rbuf->wpos + 1) < rbuf->capacity)
     {
-        rbuf->buffer[rbuf->wpos + rbuf->capacity] = _elem;
+        rbuf->buffer[(size_t)rbuf->wpos + (size_t)rbuf->capacity] = _elem;
     }
 #else
-    rbuf->buffer[rbuf->wpos + rbuf->capacity] = _elem;
+    rbuf->buffer[(size_t)rbuf->wpos + (size_t)rbuf->capacity] = _elem;
 #endif
 
     if (rbuf->flag.cycle == 0 && (rbuf->wpos + 1) >= rbuf->capacity)

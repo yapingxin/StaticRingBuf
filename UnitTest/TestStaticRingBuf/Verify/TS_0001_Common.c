@@ -215,6 +215,156 @@ EXIT:
     StaticRingBuf_Release(&rbuf);
 }
 
+/** @note STARB_CAPTYPE is uint16_t */
+void TC0004_STARB_TestCapBound_Write(void)
+{
+    StaticRingBuf rbuf = { 0 };
+    byte* src = Get_ByteArray0();
+    STARB_CAPTYPE wcap, rcap;
+
+    const STARB_CAPTYPE Capacity = U16_MAX;
+
+    uint8_t rc = StaticRingBuf_Create(&rbuf, Capacity);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+    Verify_STARB_Create(&rbuf, Capacity);
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, Capacity);
+    CU_ASSERT_EQUAL(rcap, 0);
+
+    // Insert src[0] into rbuf
+
+    rc = StaticRingBuf_Write(&rbuf, src[0]);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+
+    CU_ASSERT_EQUAL(rbuf.wpos, 1);
+    CU_ASSERT_EQUAL(rbuf.rpos, 0);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+
+    CU_ASSERT_EQUAL(rbuf.buffer[0], src[0]);
+    CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 0], src[0]);
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, Capacity - 1);
+    CU_ASSERT_EQUAL(rcap, 1);
+
+    // Insert src[1] into rbuf
+
+    rc = StaticRingBuf_Write(&rbuf, src[1]);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+
+    CU_ASSERT_EQUAL(rbuf.wpos, 2);
+    CU_ASSERT_EQUAL(rbuf.rpos, 0);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+
+    CU_ASSERT_EQUAL(rbuf.buffer[0], src[0]);
+    CU_ASSERT_EQUAL(rbuf.buffer[1], src[1]);
+    CU_ASSERT_EQUAL(rbuf.buffer[(size_t)Capacity + 0], src[0]);
+    CU_ASSERT_EQUAL(rbuf.buffer[(size_t)Capacity + 1], src[1]);
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, Capacity - 2);
+    CU_ASSERT_EQUAL(rcap, 2);
+
+    // Insert data into rbuf until `U16_MAX - 1` items in the storage buffer
+
+    STARB_CAPTYPE count = 2;
+    int srcidx = 1;
+
+    while (count < U16_MAX - 1)
+    {
+        srcidx = (srcidx >= BYTEARRAY0_ITEMS_COUNT - 1) ? 0 : (srcidx + 1);
+        rc = StaticRingBuf_Write(&rbuf, src[srcidx]);
+        count++;
+    }
+
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+
+    CU_ASSERT_EQUAL(rbuf.wpos, count);
+    CU_ASSERT_EQUAL(rbuf.rpos, 0);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+
+    CU_ASSERT_EQUAL(rbuf.buffer[0], src[0]);
+    CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 0], src[0]);
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, 1);
+    CU_ASSERT_EQUAL(rcap, count);
+
+    // Insert 1 byte into rbuf
+
+    srcidx = (srcidx >= BYTEARRAY0_ITEMS_COUNT - 1) ? 0 : (srcidx + 1);
+    rc = StaticRingBuf_Write(&rbuf, src[srcidx]);
+    count++;
+
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+    
+    CU_ASSERT_EQUAL(rbuf.wpos, 0);
+    CU_ASSERT_EQUAL(rbuf.rpos, 0);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 1);
+
+    CU_ASSERT_EQUAL(rbuf.buffer[count - 1], src[srcidx]);
+#if STARB_TD_COPYMIRRORATLAST == 1
+    CU_ASSERT_EQUAL(rbuf.buffer[2 * (size_t)Capacity - 1], src[srcidx]);
+#else
+    CU_ASSERT_EQUAL(rbuf.buffer[2 * (size_t)Capacity - 1], 0);
+#endif
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, 0);
+    CU_ASSERT_EQUAL(rcap, count);
+
+    // Insert 1 byte into rbuf
+
+    int newidx = (srcidx >= BYTEARRAY0_ITEMS_COUNT - 1) ? 0 : (srcidx + 1);
+    rc = StaticRingBuf_Write(&rbuf, src[newidx]);
+    CU_ASSERT_EQUAL(rc, STARB_BUFOVERFLOW);
+    if (rc != STARB_BUFOVERFLOW)
+    {
+        goto EXIT;
+    }
+
+    CU_ASSERT_EQUAL(rbuf.wpos, 0);
+    CU_ASSERT_EQUAL(rbuf.rpos, 0);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 1);
+
+    CU_ASSERT_EQUAL(rbuf.buffer[count - 1], src[srcidx]);
+#if STARB_TD_COPYMIRRORATLAST == 1
+    CU_ASSERT_EQUAL(rbuf.buffer[2 * (size_t)Capacity - 1], src[srcidx]);
+#else
+    CU_ASSERT_EQUAL(rbuf.buffer[2 * (size_t)Capacity - 1], 0);
+#endif
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, 0);
+    CU_ASSERT_EQUAL(rcap, count);
+
+EXIT:
+    StaticRingBuf_Release(&rbuf);
+}
+
 /** @par Private (Static) functions implementation
  */
 
