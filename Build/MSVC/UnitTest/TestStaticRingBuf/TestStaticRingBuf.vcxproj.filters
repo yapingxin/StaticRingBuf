@@ -33,6 +33,9 @@
     <ClCompile Include="..\..\..\..\Code\StaticRingBuf.c">
       <Filter>Code\StaticRingBuf</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001_TestData.c">
+      <Filter>Code\Verify</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001.h">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\Code\Common\datatypes.h">
       <Filter>Code\StaticRingBuf\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001_TestData.h">
+      <Filter>Code\Verify</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

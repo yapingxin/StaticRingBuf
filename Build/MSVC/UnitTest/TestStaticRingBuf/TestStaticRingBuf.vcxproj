@@ -162,12 +162,14 @@
     <ClCompile Include="..\..\..\..\Code\StaticRingBuf.c" />
     <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\TestStaticRingBuf.c" />
     <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001_Common.c" />
+    <ClCompile Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001_TestData.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\Code\Common\datatypes.h" />
     <ClInclude Include="..\..\..\..\Code\StaticRingBuf.h" />
     <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Common\unistd.h" />
     <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001.h" />
+    <ClInclude Include="..\..\..\..\UnitTest\TestStaticRingBuf\Verify\TS_0001_TestData.h" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\..\Code\LibDev\CUnit\ResourceFiles\CUnit-List.dtd">

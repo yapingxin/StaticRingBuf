@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
     }
 
     CU_ADD_TEST(suite_0001, TC0001_STARB_Create_Release);
+    CU_ADD_TEST(suite_0001, TC0002_STARB_Init_Release);
 
     switch (run_mode)
     {
