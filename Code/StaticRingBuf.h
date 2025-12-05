@@ -34,14 +34,22 @@
 #include "Common/datatypes.h"
 
 #define STARB_OK            1
-#define STARB_FAIL          0xE0
+// #define STARB_FAIL          0xE0
 #define STARB_PARAM_NULL    0xE1
 #define STARB_ALLOC_FAIL    0xE2
 #define STARB_BUFOVERFLOW   0xE3
 
-
 /** @brief Datatype redefinition */
 typedef uint16_t STARB_CAPTYPE;
+
+/** @brief Tech Decision Macros */
+
+/** @note 
+    If copy mirror data at the last position, set STARB_TD_COPYMIRRORATLAST := 1; 
+    else set STARB_TD_COPYMIRRORATLAST := 0
+    Default value: 0
+*/
+#define STARB_TD_COPYMIRRORATLAST 0
 
 /** @brief Ring buffer flag structure */
 typedef struct _STARB_Flag_t {
