@@ -169,11 +169,7 @@ void TC0003_STARB_Write1Byte(void)
     CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 0], src[0]);
     CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 1], src[1]);
     CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 2], src[2]);
-#if STARB_TD_COPYMIRRORATLAST == 1
     CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 3], src[3]);
-#else
-    CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 3], 0);
-#endif
 
     wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
     rcap = StaticRingBuf_GetReadCapacity(&rbuf);
@@ -200,11 +196,7 @@ void TC0003_STARB_Write1Byte(void)
     CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 0], src[0]);
     CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 1], src[1]);
     CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 2], src[2]);
-#if STARB_TD_COPYMIRRORATLAST == 1
     CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 3], src[3]);
-#else
-    CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 3], 0);
-#endif
 
     wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
     rcap = StaticRingBuf_GetReadCapacity(&rbuf);
@@ -324,11 +316,7 @@ void TC0004_STARB_TestCapBound_Write(void)
     CU_ASSERT_EQUAL(rbuf.flag.cycle, 1);
 
     CU_ASSERT_EQUAL(rbuf.buffer[count - 1], src[srcidx]);
-#if STARB_TD_COPYMIRRORATLAST == 1
     CU_ASSERT_EQUAL(rbuf.buffer[2 * (size_t)Capacity - 1], src[srcidx]);
-#else
-    CU_ASSERT_EQUAL(rbuf.buffer[2 * (size_t)Capacity - 1], 0);
-#endif
 
     wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
     rcap = StaticRingBuf_GetReadCapacity(&rbuf);
@@ -350,11 +338,7 @@ void TC0004_STARB_TestCapBound_Write(void)
     CU_ASSERT_EQUAL(rbuf.flag.cycle, 1);
 
     CU_ASSERT_EQUAL(rbuf.buffer[count - 1], src[srcidx]);
-#if STARB_TD_COPYMIRRORATLAST == 1
     CU_ASSERT_EQUAL(rbuf.buffer[2 * (size_t)Capacity - 1], src[srcidx]);
-#else
-    CU_ASSERT_EQUAL(rbuf.buffer[2 * (size_t)Capacity - 1], 0);
-#endif
 
     wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
     rcap = StaticRingBuf_GetReadCapacity(&rbuf);

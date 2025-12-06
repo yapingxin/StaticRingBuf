@@ -44,13 +44,6 @@ typedef uint16_t STARB_CAPTYPE;
 
 /** @brief Tech Decision Macros */
 
-/** @note 
-    If copy mirror data at the last position, set STARB_TD_COPYMIRRORATLAST := 1; 
-    else set STARB_TD_COPYMIRRORATLAST := 0
-    Default value: 0
-*/
-#define STARB_TD_COPYMIRRORATLAST 0
-
 /** @brief Ring buffer flag structure */
 typedef struct _STARB_Flag_t {
     uint8_t zeros  : 6;
