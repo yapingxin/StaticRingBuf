@@ -52,7 +52,7 @@ typedef double          float64_t;
 typedef unsigned char	byte;
 typedef char            sbyte;
 
-#define U16_MAX     0xFFFF
-#define U32_MAX     0xFFFFFFFF
+#define U16_MAX  0xFFFF
+#define U32_MAX  0xFFFFFFFF
 
 #endif // !_INC_COMMON_datatypes_H
