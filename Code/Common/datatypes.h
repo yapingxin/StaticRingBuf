@@ -52,6 +52,12 @@ typedef double          float64_t;
 typedef unsigned char	byte;
 typedef char            sbyte;
 
+#ifdef _WIN64
+#define ssize_t __int64
+#else
+#define ssize_t long
+#endif
+
 #define U16_MAX  0xFFFF
 #define U32_MAX  0xFFFFFFFF
 

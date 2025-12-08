@@ -34,10 +34,12 @@
 #include "Common/datatypes.h"
 
 #define STARB_OK            1
-// #define STARB_FAIL          0xE0
 #define STARB_PARAM_NULL    0xE1
-#define STARB_ALLOC_FAIL    0xE2
-#define STARB_BUFOVERFLOW   0xE3
+#define STARB_PARAMOUTRANGE 0xE2
+#define STARB_ALLOC_FAIL    0xE3
+#define STARB_BUFOVERFLOW   0xE4
+#define STARB_NOENOUGHDAT   0xE5
+#define STARB_DATAINVALID   0xE6
 
 /** @brief Datatype redefinition */
 typedef uint16_t STARB_CAPTYPE;
@@ -115,14 +117,27 @@ extern "C" {
 
     /** @brief Write 1 byte into the StaticRingBuf instance's storage buffer.
      *
-     *  @param[in] rbuf  The StaticRingBuf instance to be initialized
-     *  @param[in] _elem Logical storage capacity in bytes
+     *  @param[in] rbuf     The StaticRingBuf instance
+     *  @param[in] _elem    Content to be written
      *
      *  @retval 1    Executed successfully.
      *  @retval 0xE1 Failed: Has empty input parameter.
      *  @retval 0xE3 Failed: Buffer overflow.
      */
     uint8_t StaticRingBuf_Write(StaticRingBuf* rbuf, const byte _elem);
+
+    /** @brief Read 1 byte from the StaticRingBuf instance's storage buffer.
+     *
+     *  @param[in] rbuf     The StaticRingBuf instance
+     *  @param[out] _elem   Pointer to output the read content
+     *
+     *  @retval 1    Executed successfully.
+     *  @retval 0xE1 Failed: Has empty input parameter.
+     *  @retval 0xE4 Failed: No (enough) data.
+     */
+    uint8_t StaticRingBuf_Read(StaticRingBuf* rbuf, byte* _elem);
+
+    uint8_t StaticRingBuf_ReadItems(StaticRingBuf* rbuf, byte* outbuf, const STARB_CAPTYPE readcount);
 
 #ifdef __cplusplus
 } // ! extern "C"

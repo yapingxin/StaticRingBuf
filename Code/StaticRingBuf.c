@@ -149,8 +149,8 @@ STARB_CAPTYPE StaticRingBuf_GetReadCapacity(StaticRingBuf* rbuf)
 
 /** @brief Write 1 byte into the StaticRingBuf instance's storage buffer.
  *
- *  @param[in] rbuf  The StaticRingBuf instance to be initialized
- *  @param[in] _elem Logical storage capacity in bytes
+ *  @param[in] rbuf     The StaticRingBuf instance
+ *  @param[in] _elem    Content to be written
  *
  *  @retval 1    Executed successfully.
  *  @retval 0xE1 Failed: Has empty input parameter.
@@ -185,6 +185,74 @@ uint8_t StaticRingBuf_Write(StaticRingBuf* rbuf, const byte _elem)
     {
         rbuf->wpos++;
     }
+
+EXIT:
+    return rc;
+}
+
+/** @brief Read 1 byte from the StaticRingBuf instance's storage buffer.
+ *
+ *  @param[in] rbuf     The StaticRingBuf instance
+ *  @param[out] _elem   Pointer to output the read content
+ *
+ *  @retval 1    Executed successfully.
+ *  @retval 0xE1 Failed: Has empty input parameter.
+ *  @retval 0xE4 Failed: No (enough) data.
+ */
+uint8_t StaticRingBuf_Read(StaticRingBuf* rbuf, byte* _elem)
+{
+    return StaticRingBuf_ReadItems(rbuf, _elem, 1);
+}
+
+uint8_t StaticRingBuf_ReadItems(StaticRingBuf* rbuf, byte* outbuf, const STARB_CAPTYPE readcount)
+{
+    uint8_t rc = STARB_OK;
+    STARB_CAPTYPE rpos_next;
+
+    if (readcount <= 0)
+    {
+        goto EXIT;
+    }
+
+    if (rbuf == NULL || outbuf == NULL)
+    {
+        rc = STARB_PARAM_NULL;
+        goto EXIT;
+    }
+
+    if (readcount > rbuf->capacity)
+    {
+        rc = STARB_PARAMOUTRANGE;
+        goto EXIT;
+    }
+
+    STARB_CAPTYPE read_capacity = StaticRingBuf_GetReadCapacity(rbuf);
+    if (read_capacity <= 0 || readcount > read_capacity)
+    {
+        rc = STARB_NOENOUGHDAT;
+        goto EXIT;
+    }
+
+    if (rbuf->rpos >= rbuf->capacity - readcount)
+    {
+        if (rbuf->flag.cycle == 1)
+        {
+            rpos_next = (STARB_CAPTYPE)((ssize_t)rbuf->rpos + (ssize_t)readcount - (ssize_t)rbuf->capacity);
+            rbuf->flag.cycle = 0;
+        }
+        else
+        {
+            rc = STARB_DATAINVALID;
+            goto EXIT;
+        }
+    }
+    else
+    {
+        rpos_next = rbuf->rpos + readcount;
+    }
+
+    memcpy(outbuf, (rbuf->buffer + rbuf->rpos), readcount);
+    rbuf->rpos = rpos_next;
 
 EXIT:
     return rc;
