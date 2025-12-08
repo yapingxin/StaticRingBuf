@@ -44,7 +44,7 @@ EXIT:
  *
  *  @retval 1    Executed successfully.
  *  @retval 0xE1 Failed: Has empty input parameter.
- *  @retval 0xE2 Failed: Dynamically create buffer memory space failed.
+ *  @retval 0xE3 Failed: Dynamically create buffer memory space failed.
  */
 uint8_t StaticRingBuf_Create(StaticRingBuf* rbuf, const STARB_CAPTYPE _capacity)
 {
@@ -154,7 +154,7 @@ STARB_CAPTYPE StaticRingBuf_GetReadCapacity(StaticRingBuf* rbuf)
  *
  *  @retval 1    Executed successfully.
  *  @retval 0xE1 Failed: Has empty input parameter.
- *  @retval 0xE3 Failed: Buffer overflow.
+ *  @retval 0xE4 Failed: Buffer overflow.
  */
 uint8_t StaticRingBuf_Write(StaticRingBuf* rbuf, const byte _elem)
 {
@@ -197,13 +197,26 @@ EXIT:
  *
  *  @retval 1    Executed successfully.
  *  @retval 0xE1 Failed: Has empty input parameter.
- *  @retval 0xE4 Failed: No (enough) data.
+ *  @retval 0xE5 Failed: No (enough) data.
+ *  @retval 0xE6 Failed: Invalid data.
  */
 uint8_t StaticRingBuf_Read(StaticRingBuf* rbuf, byte* _elem)
 {
     return StaticRingBuf_ReadItems(rbuf, _elem, 1);
 }
 
+/** @brief Read bytes from the StaticRingBuf instance's storage buffer.
+ *
+ *  @param[in] rbuf      The StaticRingBuf instance
+ *  @param[out] outbuf   Pointer to the output buffer to hold the read result
+ *  @param[in] readcount The length to read (unit: bytes)
+ *
+ *  @retval 1    Executed successfully.
+ *  @retval 0xE1 Failed: Has empty input parameter.
+ *  @retval 0xE2 Failed: Input parameter is out of range.
+ *  @retval 0xE5 Failed: No (enough) data.
+ *  @retval 0xE6 Failed: Invalid data.
+ */
 uint8_t StaticRingBuf_ReadItems(StaticRingBuf* rbuf, byte* outbuf, const STARB_CAPTYPE readcount)
 {
     uint8_t rc = STARB_OK;
