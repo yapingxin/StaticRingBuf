@@ -126,6 +126,8 @@ extern "C" {
      */
     uint8_t StaticRingBuf_Write(StaticRingBuf* rbuf, const byte _elem);
 
+    uint8_t StaticRingBuf_WriteItems(StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount);
+
     /** @brief Read 1 byte from the StaticRingBuf instance's storage buffer.
      *
      *  @param[in] rbuf     The StaticRingBuf instance

@@ -190,6 +190,60 @@ EXIT:
     return rc;
 }
 
+uint8_t StaticRingBuf_WriteItems(StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount)
+{
+    uint8_t rc = STARB_OK;
+    STARB_CAPTYPE wpos_next;
+
+    if (writecount <= 0)
+    {
+        goto EXIT;
+    }
+
+    if (rbuf == NULL || srcbuf == NULL)
+    {
+        rc = STARB_PARAM_NULL;
+        goto EXIT;
+    }
+
+    if (writecount > rbuf->capacity)
+    {
+        rc = STARB_PARAMOUTRANGE;
+        goto EXIT;
+    }
+
+    STARB_CAPTYPE write_capacity = StaticRingBuf_GetWriteCapacity(rbuf);
+    if (write_capacity <= 0 || writecount > write_capacity)
+    {
+        rc = STARB_BUFOVERFLOW;
+        goto EXIT;
+    }
+
+    byte* dst = rbuf->buffer + (rbuf->wpos);
+    memcpy((void*)dst, srcbuf, writecount);
+    if (rbuf->wpos <= rbuf->capacity - writecount)
+    {
+        dst += rbuf->capacity;
+        memcpy((void*)dst, srcbuf, writecount);
+    }
+    else
+    {
+
+    }
+
+    if (rbuf->wpos >= rbuf->capacity - writecount)
+    {
+
+    }
+    else
+    {
+
+    }
+
+EXIT:
+    return rc;
+}
+
 /** @brief Read 1 byte from the StaticRingBuf instance's storage buffer.
  *
  *  @param[in] rbuf     The StaticRingBuf instance
