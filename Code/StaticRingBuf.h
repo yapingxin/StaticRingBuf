@@ -126,6 +126,17 @@ extern "C" {
      */
     uint8_t StaticRingBuf_Write(StaticRingBuf* rbuf, const byte _elem);
 
+    /** @brief Write bytes into the StaticRingBuf instance's storage buffer.
+     *
+     *  @param[in] rbuf         The StaticRingBuf instance
+     *  @param[in] srcbuf       Pointer to source data buffer to be written
+     *  @param[in] writecount   Data length to be written
+     *
+     *  @retval 1    Executed successfully.
+     *  @retval 0xE1 Failed: Has empty input parameter.
+     *  @retval 0xE2 Failed: Input parameter is out of range.
+     *  @retval 0xE4 Failed: Buffer overflow.
+     */
     uint8_t StaticRingBuf_WriteItems(StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount);
 
     /** @brief Read 1 byte from the StaticRingBuf instance's storage buffer.

@@ -190,10 +190,20 @@ EXIT:
     return rc;
 }
 
+/** @brief Write bytes into the StaticRingBuf instance's storage buffer.
+ *
+ *  @param[in] rbuf         The StaticRingBuf instance
+ *  @param[in] srcbuf       Pointer to source data buffer to be written
+ *  @param[in] writecount   Data length to be written
+ *
+ *  @retval 1    Executed successfully.
+ *  @retval 0xE1 Failed: Has empty input parameter.
+ *  @retval 0xE2 Failed: Input parameter is out of range.
+ *  @retval 0xE4 Failed: Buffer overflow.
+ */
 uint8_t StaticRingBuf_WriteItems(StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount)
 {
     uint8_t rc = STARB_OK;
-    STARB_CAPTYPE wpos_next;
 
     if (writecount <= 0)
     {
@@ -219,7 +229,7 @@ uint8_t StaticRingBuf_WriteItems(StaticRingBuf* rbuf, byte* srcbuf, const STARB_
         goto EXIT;
     }
 
-    byte* dst = rbuf->buffer + (rbuf->wpos);
+    byte* dst = rbuf->buffer + rbuf->wpos;
     memcpy((void*)dst, srcbuf, writecount);
     if (rbuf->wpos <= rbuf->capacity - writecount)
     {
@@ -228,16 +238,22 @@ uint8_t StaticRingBuf_WriteItems(StaticRingBuf* rbuf, byte* srcbuf, const STARB_
     }
     else
     {
-
+        STARB_CAPTYPE countL = rbuf->capacity - rbuf->wpos;
+        dst += rbuf->capacity;
+        memcpy((void*)dst, srcbuf, countL);
+        size_t countR = (size_t)rbuf->wpos + (size_t)writecount - (size_t)rbuf->capacity;
+        byte* src = rbuf->buffer + rbuf->capacity;
+        memcpy((void*)rbuf->buffer, src, countR);
     }
 
     if (rbuf->wpos >= rbuf->capacity - writecount)
     {
-
+        rbuf->wpos = (STARB_CAPTYPE)((size_t)rbuf->wpos + (size_t)writecount - (size_t)rbuf->capacity);
+        rbuf->flag.cycle = 1;
     }
     else
     {
-
+        rbuf->wpos = rbuf->wpos + writecount;
     }
 
 EXIT:
