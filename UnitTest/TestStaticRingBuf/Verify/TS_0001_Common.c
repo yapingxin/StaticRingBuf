@@ -8,7 +8,8 @@
 /** @par Private (Static) data declaration
  */
 
-static byte STOBUF[2 * RB_LENGTH] = { 0 };
+static byte STOBUF[2 * RB_LENGTH] = { 0 };  // StaticRingBuf storage buffer
+static byte ReadBuf[RB_LENGTH] = { 0 };     // Read output buffer
 
 /** @par Private (Static) functions declaration
  */
@@ -344,6 +345,174 @@ void TC0004_STARB_TestCapBound_Write(void)
     rcap = StaticRingBuf_GetReadCapacity(&rbuf);
     CU_ASSERT_EQUAL(wcap, 0);
     CU_ASSERT_EQUAL(rcap, count);
+
+EXIT:
+    StaticRingBuf_Release(&rbuf);
+}
+
+void TC0005_STARB_WriteItems(void)
+{
+    StaticRingBuf rbuf = { 0 };
+    byte* src = Get_ByteArray0();
+    STARB_CAPTYPE wcap, rcap;
+
+    uint8_t rc = StaticRingBuf_Init(&rbuf, RB_LENGTH, STOBUF);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+    Verify_STARB_Init(&rbuf, RB_LENGTH);
+
+    // Insert 12 items: Failed with error code 0xE2 (STARB_PARAMOUTRANGE)
+
+    rc = StaticRingBuf_WriteItems(&rbuf, &src[0], 12);
+    CU_ASSERT_EQUAL(rc, STARB_PARAMOUTRANGE);
+    if (rc != STARB_PARAMOUTRANGE)
+    {
+        goto EXIT;
+    }
+
+    // Insert 3 items src[0..2] into rbuf
+
+    rc = StaticRingBuf_WriteItems(&rbuf, &src[0], 3);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+
+    CU_ASSERT_EQUAL(rbuf.wpos, 3);
+    CU_ASSERT_EQUAL(rbuf.rpos, 0);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+
+    CU_ASSERT_EQUAL(rbuf.buffer[0], src[0]);
+    CU_ASSERT_EQUAL(rbuf.buffer[1], src[1]);
+    CU_ASSERT_EQUAL(rbuf.buffer[2], src[2]);
+
+    CU_ASSERT_EQUAL(rbuf.buffer[RB_LENGTH + 0], src[0]);
+    CU_ASSERT_EQUAL(rbuf.buffer[RB_LENGTH + 1], src[1]);
+    CU_ASSERT_EQUAL(rbuf.buffer[RB_LENGTH + 2], src[2]);
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, RB_LENGTH - 3);
+    CU_ASSERT_EQUAL(rcap, 3);
+
+    // Insert 6 items src[3..8] into rbuf
+
+    rc = StaticRingBuf_WriteItems(&rbuf, &src[3], 6);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+
+    CU_ASSERT_EQUAL(rbuf.wpos, 9);
+    CU_ASSERT_EQUAL(rbuf.rpos, 0);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+
+    for (uint8_t idx = 0; idx <= 8; idx++)
+    {
+        CU_ASSERT_EQUAL(rbuf.buffer[idx], src[idx]);
+        CU_ASSERT_EQUAL(rbuf.buffer[RB_LENGTH + idx], src[idx]);
+    }
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, 1);
+    CU_ASSERT_EQUAL(rcap, 9);
+
+    // Insert 2 items: Failed with error code 0xE4 (STARB_BUFOVERFLOW)
+
+    rc = StaticRingBuf_WriteItems(&rbuf, &src[9], 2);
+    CU_ASSERT_EQUAL(rc, STARB_BUFOVERFLOW);
+    if (rc != STARB_BUFOVERFLOW)
+    {
+        goto EXIT;
+    }
+
+    // Verify that wpos and rpos have not been changed.
+    CU_ASSERT_EQUAL(rbuf.wpos, 9);
+    CU_ASSERT_EQUAL(rbuf.rpos, 0);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, 1);
+    CU_ASSERT_EQUAL(rcap, 9);
+
+    // Read 5 items
+
+    rc = StaticRingBuf_ReadItems(&rbuf, ReadBuf, 5);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+
+    for (uint8_t idx = 0; idx < 5; idx++)
+    {
+        CU_ASSERT_EQUAL(ReadBuf[idx], src[idx]);
+    }
+
+    CU_ASSERT_EQUAL(rbuf.wpos, 9);
+    CU_ASSERT_EQUAL(rbuf.rpos, 5);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, 6);
+    CU_ASSERT_EQUAL(rcap, 4);
+
+    // Insert 3 items src[9..11] into rbuf
+
+    rc = StaticRingBuf_WriteItems(&rbuf, &src[9], 3);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+
+    CU_ASSERT_EQUAL(rbuf.buffer[0], src[10]);
+    CU_ASSERT_EQUAL(rbuf.buffer[1], src[11]);
+
+    for (uint8_t idx = 2; idx <= 9; idx++)
+    {
+        CU_ASSERT_EQUAL(rbuf.buffer[idx], src[idx]);
+        CU_ASSERT_EQUAL(rbuf.buffer[RB_LENGTH + idx], src[idx]);
+    }
+
+    CU_ASSERT_EQUAL(rbuf.buffer[10], src[10]);
+    CU_ASSERT_EQUAL(rbuf.buffer[11], src[11]);
+
+    CU_ASSERT_EQUAL(rbuf.wpos, 2);
+    CU_ASSERT_EQUAL(rbuf.rpos, 5);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 1);
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, 3);
+    CU_ASSERT_EQUAL(rcap, 7);
+
+    // Read 7 items
+
+    rc = StaticRingBuf_ReadItems(&rbuf, ReadBuf, 7);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+
+    for (uint8_t idx = 0; idx < 7; idx++)
+    {
+        CU_ASSERT_EQUAL(ReadBuf[idx], src[5 + idx]);
+    }
+
+    CU_ASSERT_EQUAL(rbuf.wpos, 2);
+    CU_ASSERT_EQUAL(rbuf.rpos, 2);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, 10);
+    CU_ASSERT_EQUAL(rcap, 0);
 
 EXIT:
     StaticRingBuf_Release(&rbuf);
