@@ -465,3 +465,36 @@ uint8_t StaticRingBuf_Forward(StaticRingBuf* rbuf, const STARB_CAPTYPE skipcount
 EXIT:
     return rc;
 }
+
+uint8_t StaticRingBuf_PeekLatestItems(StaticRingBuf* rbuf, void* outbuf, const uint32_t readcount)
+{
+    uint8_t rc = STARB_OK;
+    // STARB_CAPTYPE rpos_next;
+
+    if (readcount <= 0)
+    {
+        goto EXIT;
+    }
+
+    if (rbuf == NULL || outbuf == NULL)
+    {
+        rc = STARB_PARAM_NULL;
+        goto EXIT;
+    }
+
+    if (readcount > rbuf->capacity)
+    {
+        rc = STARB_PARAMOUTRANGE;
+        goto EXIT;
+    }
+
+    STARB_CAPTYPE read_capacity = StaticRingBuf_GetReadCapacity(rbuf);
+    if (read_capacity <= 0 || readcount > read_capacity)
+    {
+        rc = STARB_NOENOUGHDAT;
+        goto EXIT;
+    }
+
+EXIT:
+    return rc;
+}
