@@ -185,6 +185,19 @@ extern "C" {
     /** @brief Get writing pointer of the StaticRingBuf instance. */
     byte* StaticRingBuf_GetWritePtr(StaticRingBuf* rbuf);
 
+    /** @brief Move reading pointer forward (skip bytes) for the StaticRingBuf instance.
+     *
+     *  @param[in] rbuf      The StaticRingBuf instance
+     *  @param[in] readcount The length to move forward (skip)
+     *
+     *  @retval 1    Executed successfully.
+     *  @retval 0xE1 Failed: Has empty input parameter.
+     *  @retval 0xE2 Failed: Input parameter is out of range.
+     *  @retval 0xE5 Failed: No (enough) data.
+     *  @retval 0xE6 Failed: Invalid data.
+     */
+    uint8_t StaticRingBuf_Forward(StaticRingBuf* rbuf, const STARB_CAPTYPE skipcount);
+
 #ifdef __cplusplus
 } // ! extern "C"
 #endif
