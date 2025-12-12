@@ -165,6 +165,26 @@ extern "C" {
      */
     uint8_t StaticRingBuf_ReadItems(StaticRingBuf* rbuf, byte* outbuf, const STARB_CAPTYPE readcount);
 
+    /** @brief Read bytes from the StaticRingBuf instance's storage buffer without moving the read position.
+     *
+     *  @param[in] rbuf      The StaticRingBuf instance
+     *  @param[out] outbuf   Pointer to the output buffer to hold the read result
+     *  @param[in] readcount The length to read (unit: bytes)
+     *
+     *  @retval 1    Executed successfully.
+     *  @retval 0xE1 Failed: Has empty input parameter.
+     *  @retval 0xE2 Failed: Input parameter is out of range.
+     *  @retval 0xE5 Failed: No (enough) data.
+     *  @retval 0xE6 Failed: Invalid data.
+     */
+    uint8_t StaticRingBuf_PeekItems(StaticRingBuf* rbuf, byte* outbuf, const STARB_CAPTYPE readcount);
+
+    /** @brief Get reading pointer of the StaticRingBuf instance. */
+    byte* StaticRingBuf_GetReadPtr(StaticRingBuf* rbuf);
+
+    /** @brief Get writing pointer of the StaticRingBuf instance. */
+    byte* StaticRingBuf_GetWritePtr(StaticRingBuf* rbuf);
+
 #ifdef __cplusplus
 } // ! extern "C"
 #endif

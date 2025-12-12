@@ -340,3 +340,67 @@ uint8_t StaticRingBuf_ReadItems(StaticRingBuf* rbuf, byte* outbuf, const STARB_C
 EXIT:
     return rc;
 }
+
+/** @brief Read bytes from the StaticRingBuf instance's storage buffer without moving the read position.
+ *
+ *  @param[in] rbuf      The StaticRingBuf instance
+ *  @param[out] outbuf   Pointer to the output buffer to hold the read result
+ *  @param[in] readcount The length to read (unit: bytes)
+ *
+ *  @retval 1    Executed successfully.
+ *  @retval 0xE1 Failed: Has empty input parameter.
+ *  @retval 0xE2 Failed: Input parameter is out of range.
+ *  @retval 0xE5 Failed: No (enough) data.
+ *  @retval 0xE6 Failed: Invalid data.
+ */
+uint8_t StaticRingBuf_PeekItems(StaticRingBuf* rbuf, byte* outbuf, const STARB_CAPTYPE readcount)
+{
+    uint8_t rc = STARB_OK;
+
+    if (readcount <= 0)
+    {
+        goto EXIT;
+    }
+
+    if (rbuf == NULL || outbuf == NULL)
+    {
+        rc = STARB_PARAM_NULL;
+        goto EXIT;
+    }
+
+    if (readcount > rbuf->capacity)
+    {
+        rc = STARB_PARAMOUTRANGE;
+        goto EXIT;
+    }
+
+    STARB_CAPTYPE read_capacity = StaticRingBuf_GetReadCapacity(rbuf);
+    if (read_capacity <= 0 || readcount > read_capacity)
+    {
+        rc = STARB_NOENOUGHDAT;
+        goto EXIT;
+    }
+
+    if ((rbuf->rpos >= rbuf->capacity - readcount) && (rbuf->flag.cycle == 0))
+    {
+        rc = STARB_DATAINVALID;
+        goto EXIT;
+    }
+
+    memcpy(outbuf, (rbuf->buffer + rbuf->rpos), readcount);
+
+EXIT:
+    return rc;
+}
+
+/** @brief Get reading pointer of the StaticRingBuf instance. */
+byte* StaticRingBuf_GetReadPtr(StaticRingBuf* rbuf)
+{
+    return rbuf->buffer + rbuf->rpos;
+}
+
+/** @brief Get writing pointer of the StaticRingBuf instance. */
+byte* StaticRingBuf_GetWritePtr(StaticRingBuf* rbuf)
+{
+    return rbuf->buffer + rbuf->wpos;
+}
