@@ -54,6 +54,7 @@ int main(int argc, char* argv[])
     CU_ADD_TEST(suite_0001, TC0003_STARB_Write1Byte);
     CU_ADD_TEST(suite_0001, TC0004_STARB_TestCapBound_Write);
     CU_ADD_TEST(suite_0001, TC0005_STARB_WriteItems);
+    CU_ADD_TEST(suite_0001, TC0006_STARB_TestCapBound_WriteItems);
 
     switch (run_mode)
     {

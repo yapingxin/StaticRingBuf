@@ -15,6 +15,7 @@ extern "C" {
     void TC0003_STARB_Write1Byte(void);
     void TC0004_STARB_TestCapBound_Write(void);
     void TC0005_STARB_WriteItems(void);
+    void TC0006_STARB_TestCapBound_WriteItems(void);
 
 #ifdef __cplusplus
 } // ! extern "C"

@@ -39,9 +39,9 @@ void TC0001_STARB_Create_Release(void)
     StaticRingBuf rbuf = { 0 };
 
     uint8_t rc = StaticRingBuf_Create(&rbuf, RB_LENGTH);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc == STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         Verify_STARB_Create(&rbuf, RB_LENGTH);
     }
 
@@ -74,9 +74,9 @@ void TC0003_STARB_Write1Byte(void)
     const STARB_CAPTYPE Capacity = 4;
 
     uint8_t rc = StaticRingBuf_Init(&rbuf, Capacity, STOBUF);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
     Verify_STARB_Init(&rbuf, Capacity);
@@ -84,9 +84,9 @@ void TC0003_STARB_Write1Byte(void)
     // Insert src[0] into rbuf
 
     rc = StaticRingBuf_Write(&rbuf, src[0]);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
 
@@ -105,9 +105,9 @@ void TC0003_STARB_Write1Byte(void)
     // Insert src[1] into rbuf
 
     rc = StaticRingBuf_Write(&rbuf, src[1]);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
 
@@ -128,9 +128,9 @@ void TC0003_STARB_Write1Byte(void)
     // Insert src[2] into rbuf
 
     rc = StaticRingBuf_Write(&rbuf, src[2]);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
 
@@ -153,9 +153,9 @@ void TC0003_STARB_Write1Byte(void)
     // Insert src[3] into rbuf
 
     rc = StaticRingBuf_Write(&rbuf, src[3]);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
 
@@ -180,9 +180,9 @@ void TC0003_STARB_Write1Byte(void)
     // Insert src[4] into rbuf
 
     rc = StaticRingBuf_Write(&rbuf, src[4]);
-    CU_ASSERT_EQUAL(rc, STARB_BUFOVERFLOW);
     if (rc != STARB_BUFOVERFLOW)
     {
+        CU_ASSERT_EQUAL(rc, STARB_BUFOVERFLOW);
         goto EXIT;
     }
 
@@ -218,9 +218,9 @@ void TC0004_STARB_TestCapBound_Write(void)
     const STARB_CAPTYPE Capacity = U16_MAX;
 
     uint8_t rc = StaticRingBuf_Create(&rbuf, Capacity);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
     Verify_STARB_Create(&rbuf, Capacity);
@@ -233,9 +233,9 @@ void TC0004_STARB_TestCapBound_Write(void)
     // Insert src[0] into rbuf
 
     rc = StaticRingBuf_Write(&rbuf, src[0]);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
 
@@ -254,9 +254,9 @@ void TC0004_STARB_TestCapBound_Write(void)
     // Insert src[1] into rbuf
 
     rc = StaticRingBuf_Write(&rbuf, src[1]);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
 
@@ -305,10 +305,10 @@ void TC0004_STARB_TestCapBound_Write(void)
     srcidx = (srcidx >= BYTEARRAY0_ITEMS_COUNT - 1) ? 0 : (srcidx + 1);
     rc = StaticRingBuf_Write(&rbuf, src[srcidx]);
     count++;
-
-    CU_ASSERT_EQUAL(rc, STARB_OK);
+    
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
     
@@ -328,9 +328,9 @@ void TC0004_STARB_TestCapBound_Write(void)
 
     int newidx = (srcidx >= BYTEARRAY0_ITEMS_COUNT - 1) ? 0 : (srcidx + 1);
     rc = StaticRingBuf_Write(&rbuf, src[newidx]);
-    CU_ASSERT_EQUAL(rc, STARB_BUFOVERFLOW);
     if (rc != STARB_BUFOVERFLOW)
     {
+        CU_ASSERT_EQUAL(rc, STARB_BUFOVERFLOW);
         goto EXIT;
     }
 
@@ -357,9 +357,9 @@ void TC0005_STARB_WriteItems(void)
     STARB_CAPTYPE wcap, rcap;
 
     uint8_t rc = StaticRingBuf_Init(&rbuf, RB_LENGTH, STOBUF);
-    CU_ASSERT_EQUAL(rc, STARB_OK);
     if (rc != STARB_OK)
     {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
         goto EXIT;
     }
     Verify_STARB_Init(&rbuf, RB_LENGTH);
@@ -513,6 +513,111 @@ void TC0005_STARB_WriteItems(void)
     rcap = StaticRingBuf_GetReadCapacity(&rbuf);
     CU_ASSERT_EQUAL(wcap, 10);
     CU_ASSERT_EQUAL(rcap, 0);
+
+EXIT:
+    StaticRingBuf_Release(&rbuf);
+}
+
+/** @note STARB_CAPTYPE is uint16_t */
+void TC0006_STARB_TestCapBound_WriteItems(void)
+{
+    StaticRingBuf rbuf = { 0 };
+    byte* src = Get_ByteArray0();
+    STARB_CAPTYPE wcap, rcap;
+
+    const STARB_CAPTYPE Capacity = U16_MAX;
+
+    uint8_t rc = StaticRingBuf_Create(&rbuf, Capacity);
+    if (rc != STARB_OK)
+    {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
+        goto EXIT;
+    }
+    Verify_STARB_Create(&rbuf, Capacity);
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, Capacity);
+    CU_ASSERT_EQUAL(rcap, 0);
+
+    // Insert 1 byte src[0] into rbuf
+
+    rc = StaticRingBuf_WriteItems(&rbuf, &src[0], 1);
+    if (rc != STARB_OK)
+    {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
+        goto EXIT;
+    }
+
+    CU_ASSERT_EQUAL(rbuf.wpos, 1);
+    CU_ASSERT_EQUAL(rbuf.rpos, 0);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+
+    CU_ASSERT_EQUAL(rbuf.buffer[0], src[0]);
+    CU_ASSERT_EQUAL(rbuf.buffer[Capacity + 0], src[0]);
+
+    wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    rcap = StaticRingBuf_GetReadCapacity(&rbuf);
+    CU_ASSERT_EQUAL(wcap, Capacity - 1);
+    CU_ASSERT_EQUAL(rcap, 1);
+
+    // Insert random bytes into rbuf
+
+    STARB_CAPTYPE count;
+    size_t temp_wpos;
+
+    while (wcap > 10)
+    {
+        temp_wpos = rbuf.wpos;
+
+        count = 7;
+        if (count <= 0)
+        {
+            continue;
+        }
+
+        rc = StaticRingBuf_WriteItems(&rbuf, &src[0], count);
+        if (rc != STARB_OK)
+        {
+            CU_ASSERT_EQUAL(rc, STARB_OK);
+            goto EXIT;
+        }
+
+        if (rbuf.wpos != temp_wpos + count)
+        {
+            CU_ASSERT_EQUAL(rbuf.wpos, temp_wpos + count);
+            goto EXIT;
+        }
+
+        wcap = StaticRingBuf_GetWriteCapacity(&rbuf);
+    }
+
+    // Read 10 items
+
+    rc = StaticRingBuf_ReadItems(&rbuf, ReadBuf, 10);
+    if (rc != STARB_OK)
+    {
+        CU_ASSERT_EQUAL(rc, STARB_OK);
+        goto EXIT;
+    }
+
+    CU_ASSERT_EQUAL(rbuf.rpos, 10);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 0);
+
+    // Insert 10 bytes into rbuf
+
+    temp_wpos = rbuf.wpos;
+
+    rc = StaticRingBuf_WriteItems(&rbuf, &src[0], 10);
+    CU_ASSERT_EQUAL(rc, STARB_OK);
+    if (rc != STARB_OK)
+    {
+        goto EXIT;
+    }
+
+    CU_ASSERT_EQUAL(rbuf.wpos, temp_wpos + 10 - Capacity);
+    CU_ASSERT_EQUAL(rbuf.rpos, 10);
+    CU_ASSERT_EQUAL(rbuf.flag.cycle, 1);
 
 EXIT:
     StaticRingBuf_Release(&rbuf);
