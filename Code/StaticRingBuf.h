@@ -198,8 +198,6 @@ extern "C" {
      */
     uint8_t StaticRingBuf_Forward(StaticRingBuf* rbuf, const STARB_CAPTYPE skipcount);
 
-    uint8_t StaticRingBuf_PeekLatestItems(StaticRingBuf* rbuf, void* outbuf, const uint32_t readcount);
-
 #ifdef __cplusplus
 } // ! extern "C"
 #endif
