@@ -444,7 +444,7 @@ EXIT:
 
 uint8_t StaticRingBuf_ForceWriteItemsWithLog(
     StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount,
-    STARB_Overwrite* pOverwrite, STARB_OverwriteLogFunc logcallback)
+    STARB_Lostdata* pOverwrite, STARB_LostdataLogFunc logcallback)
 {
     uint8_t rc = STARB_OK;
 
@@ -474,9 +474,39 @@ uint8_t StaticRingBuf_ForceWriteItemsWithLog(
 
     if (writecount <= write_capacity)
     {
-        StaticRingBuf_WriteItems_Core(rbuf, srcbuf, writecount);
+        goto WriteItems_Core;
+    }
+
+    STARB_CAPTYPE forcelength = writecount - write_capacity;
+    if ((rbuf->rpos >= rbuf->capacity - forcelength) && (rbuf->flag.cycle == 0))
+    {
+        rc = STARB_DATAINVALID;
         goto EXIT;
     }
+
+    if (pOverwrite == NULL || logcallback == NULL)
+    {
+        rc = STARB_BUFOVERFLOW;
+        goto EXIT;
+    }
+
+    pOverwrite->count = forcelength;
+    pOverwrite->pos = rbuf->rpos;
+    pOverwrite->dataptr = &rbuf->buffer[rbuf->rpos];
+    logcallback(pOverwrite);
+
+    if (rbuf->rpos >= rbuf->capacity - forcelength)
+    {
+        rbuf->rpos -= (rbuf->capacity - forcelength);
+        rbuf->flag.cycle = 0;
+    }
+    else
+    {
+        rbuf->rpos += forcelength;
+    }
+
+WriteItems_Core:
+    StaticRingBuf_WriteItems_Core(rbuf, srcbuf, writecount);
 
 EXIT:
     return rc;

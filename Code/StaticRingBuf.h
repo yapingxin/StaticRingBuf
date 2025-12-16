@@ -66,15 +66,15 @@ typedef struct _StaticRingBuf_t
 
 } StaticRingBuf;
 
-/** @brief Ring buffer Overwrite data structure */
-typedef struct _STARB_Overwrite_t {
-    byte* data;
+/** @brief Ring buffer lost data structure */
+typedef struct _STARB_Lostdata_t {
+    byte* dataptr;
     STARB_CAPTYPE pos;
     STARB_CAPTYPE count;
-} STARB_Overwrite;
+} STARB_Lostdata;
 
-/** @brief Callback function definition to log the  Ring buffer Overwrite data */
-typedef void (*STARB_OverwriteLogFunc)(STARB_Overwrite* log);
+/** @brief Callback function definition to log the ring buffer lost data */
+typedef void (*STARB_LostdataLogFunc)(STARB_Lostdata* log);
 
 #ifdef __cplusplus
 extern "C" {
@@ -210,7 +210,7 @@ extern "C" {
 
     uint8_t StaticRingBuf_ForceWriteItemsWithLog(
         StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount,
-        STARB_Overwrite* pOverwrite, STARB_OverwriteLogFunc logcallback);
+        STARB_Lostdata* pOverwrite, STARB_LostdataLogFunc logcallback);
 
 #ifdef __cplusplus
 } // ! extern "C"
