@@ -3,6 +3,7 @@
 #include <string.h>
 #include "StaticRingBuf.h"
 
+static inline void StaticRingBuf_WriteItems_Core(StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount);
 
 /** @brief   Initialize the StaticRingBuf instance.
  *  @details Initialize the StaticRingBuf instance, and link `buffer` to the given existent `_buffer` pointer.
@@ -229,32 +230,7 @@ uint8_t StaticRingBuf_WriteItems(StaticRingBuf* rbuf, byte* srcbuf, const STARB_
         goto EXIT;
     }
 
-    byte* dst = rbuf->buffer + rbuf->wpos;
-    memcpy((void*)dst, srcbuf, writecount);
-    if (rbuf->wpos <= rbuf->capacity - writecount)
-    {
-        dst += rbuf->capacity;
-        memcpy((void*)dst, srcbuf, writecount);
-    }
-    else
-    {
-        STARB_CAPTYPE countL = rbuf->capacity - rbuf->wpos;
-        dst += rbuf->capacity;
-        memcpy((void*)dst, srcbuf, countL);
-        size_t countR = (size_t)rbuf->wpos + (size_t)writecount - (size_t)rbuf->capacity;
-        byte* src = rbuf->buffer + rbuf->capacity;
-        memcpy((void*)rbuf->buffer, src, countR);
-    }
-
-    if (rbuf->wpos >= rbuf->capacity - writecount)
-    {
-        rbuf->wpos = (STARB_CAPTYPE)((size_t)rbuf->wpos + (size_t)writecount - (size_t)rbuf->capacity);
-        rbuf->flag.cycle = 1;
-    }
-    else
-    {
-        rbuf->wpos = rbuf->wpos + writecount;
-    }
+    StaticRingBuf_WriteItems_Core(rbuf, srcbuf, writecount);
 
 EXIT:
     return rc;
@@ -464,4 +440,74 @@ uint8_t StaticRingBuf_Forward(StaticRingBuf* rbuf, const STARB_CAPTYPE skipcount
 
 EXIT:
     return rc;
+}
+
+uint8_t StaticRingBuf_ForceWriteItemsWithLog(
+    StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount,
+    STARB_Overwrite* pOverwrite, STARB_OverwriteLogFunc logcallback)
+{
+    uint8_t rc = STARB_OK;
+
+    if (writecount <= 0)
+    {
+        goto EXIT;
+    }
+
+    if (rbuf == NULL || srcbuf == NULL)
+    {
+        rc = STARB_PARAM_NULL;
+        goto EXIT;
+    }
+
+    if (writecount > rbuf->capacity)
+    {
+        rc = STARB_PARAMOUTRANGE;
+        goto EXIT;
+    }
+
+    STARB_CAPTYPE write_capacity = StaticRingBuf_GetWriteCapacity(rbuf);
+    if (write_capacity <= 0)
+    {
+        rc = STARB_BUFOVERFLOW;
+        goto EXIT;
+    }
+
+    if (writecount <= write_capacity)
+    {
+        StaticRingBuf_WriteItems_Core(rbuf, srcbuf, writecount);
+        goto EXIT;
+    }
+
+EXIT:
+    return rc;
+}
+
+static inline void StaticRingBuf_WriteItems_Core(StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount)
+{
+    byte* dst = rbuf->buffer + rbuf->wpos;
+    memcpy((void*)dst, srcbuf, writecount);
+    if (rbuf->wpos <= rbuf->capacity - writecount)
+    {
+        dst += rbuf->capacity;
+        memcpy((void*)dst, srcbuf, writecount);
+    }
+    else
+    {
+        STARB_CAPTYPE countL = rbuf->capacity - rbuf->wpos;
+        dst += rbuf->capacity;
+        memcpy((void*)dst, srcbuf, countL);
+        size_t countR = (size_t)rbuf->wpos + (size_t)writecount - (size_t)rbuf->capacity;
+        byte* src = rbuf->buffer + rbuf->capacity;
+        memcpy((void*)rbuf->buffer, src, countR);
+    }
+
+    if (rbuf->wpos >= rbuf->capacity - writecount)
+    {
+        rbuf->wpos = (STARB_CAPTYPE)((size_t)rbuf->wpos + (size_t)writecount - (size_t)rbuf->capacity);
+        rbuf->flag.cycle = 1;
+    }
+    else
+    {
+        rbuf->wpos = rbuf->wpos + writecount;
+    }
 }

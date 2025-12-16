@@ -66,6 +66,16 @@ typedef struct _StaticRingBuf_t
 
 } StaticRingBuf;
 
+/** @brief Ring buffer Overwrite data structure */
+typedef struct _STARB_Overwrite_t {
+    byte* data;
+    STARB_CAPTYPE pos;
+    STARB_CAPTYPE count;
+} STARB_Overwrite;
+
+/** @brief Callback function definition to log the  Ring buffer Overwrite data */
+typedef void (*STARB_OverwriteLogFunc)(STARB_Overwrite* log);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -197,6 +207,10 @@ extern "C" {
      *  @retval 0xE6 Failed: Invalid data.
      */
     uint8_t StaticRingBuf_Forward(StaticRingBuf* rbuf, const STARB_CAPTYPE skipcount);
+
+    uint8_t StaticRingBuf_ForceWriteItemsWithLog(
+        StaticRingBuf* rbuf, byte* srcbuf, const STARB_CAPTYPE writecount,
+        STARB_Overwrite* pOverwrite, STARB_OverwriteLogFunc logcallback);
 
 #ifdef __cplusplus
 } // ! extern "C"
