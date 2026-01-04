@@ -23,7 +23,9 @@
  *---------------------------------------------------------------------------*
  *  Change History :                                                         *
  *---------------------------------------------------------------------------*
- *  2025/12/04 | 0.1.0.0   | Yaping Xin     | Create file                    *
+ *  2025/12/04 | 0.1.0.0   | Yaping Xin | Create file                        *
+ *  2026/01/04 | 0.2.0.0   | Yaping Xin | Remove the dynamic memory creation *
+ *                         | for non-critical usage. (Thanks Fei)            *
  *---------------------------------------------------------------------------*
  *                                                                           *
  *************************************************************************** */
@@ -36,20 +38,22 @@
 #define STARB_OK            1
 #define STARB_PARAM_NULL    0xE1
 #define STARB_PARAMOUTRANGE 0xE2
-#define STARB_ALLOC_FAIL    0xE3
 #define STARB_BUFOVERFLOW   0xE4
 #define STARB_NOENOUGHDAT   0xE5
 #define STARB_DATAINVALID   0xE6
 
 /** @brief Datatype redefinition */
 typedef uint16_t STARB_CAPTYPE;
+typedef uint32_t STARB_STOSZTP;
+
+/** @brief Define ring buffer's maxium capacity */
+#define STARB_MAXCAP    (2 * UINT16_MAX)
 
 /** @brief Tech Decision Macros */
 
 /** @brief Ring buffer flag structure */
 typedef struct _STARB_Flag_t {
-    uint8_t zeros  : 6;
-    uint8_t ownbuf : 1;
+    uint8_t zeros  : 7;
     uint8_t cycle  : 1;
 } STARB_Flag;
 
@@ -58,11 +62,11 @@ typedef struct _STARB_Flag_t {
  */
 typedef struct _StaticRingBuf_t
 {
-    byte* buffer;           // Pointer to the physical storage buffer.
-    STARB_CAPTYPE capacity; // Logical storage capacity in bytes.
-    STARB_CAPTYPE wpos;     // Write position index (base 0)
-    STARB_CAPTYPE rpos;     // Read  position index (base 0)
-    STARB_Flag    flag;     // The flag (status)
+    byte* buffer;                   // Pointer to the physical storage buffer.
+    STARB_CAPTYPE capacity;         // Logical storage capacity in bytes.
+    volatile STARB_CAPTYPE wpos;    // Write position index (base 0)
+    volatile STARB_CAPTYPE rpos;    // Read  position index (base 0)
+    volatile STARB_Flag    flag;    // The flag (status)
 
 } StaticRingBuf;
 
@@ -82,34 +86,20 @@ extern "C" {
 
     /** @brief   Initialize the StaticRingBuf instance.
      *  @details Initialize the StaticRingBuf instance, and link `buffer` to the given existent `_buffer` pointer.
+     * 
+     * CRITICAL NOTE: This library uses a Mirrored Buffer technique.
+     * The 'total_buffer_size' provided must be at least 2 bytes.
+     * The logical capacity will be exactly HALF of the provided buffer size.
      *
-     *  @param[out] rbuf     The StaticRingBuf instance to be initialized
-     *  @param[in] _capacity Logical storage capacity in bytes
-     *  @param[in] _buffer   Pointer to the physical storage buffer
-     *
-     *  @retval 1    Executed successfully.
-     *  @retval 0xE1 Failed: Has empty input parameter.
-     */
-    uint8_t StaticRingBuf_Init(StaticRingBuf* rbuf, const STARB_CAPTYPE _capacity, byte* _buffer);
-
-    /** @brief   Initialize the StaticRingBuf instance.
-     *  @details Initialize the StaticRingBuf instance, and dynamically create buffer memory space.
-     *
-     *  @param[out] rbuf     The StaticRingBuf instance to be initialized
-     *  @param[in] _capacity Logical storage capacity in bytes
+     *  @param[out] rbuf             The StaticRingBuf instance to be initialized
+     *  @param[in] total_buffer_size Physical size for the storage buffer
+     *  @param[in] _buffer           Pointer to the physical storage buffer
      *
      *  @retval 1    Executed successfully.
      *  @retval 0xE1 Failed: Has empty input parameter.
-     *  @retval 0xE3 Failed: Dynamically create buffer memory space failed.
+     *  @retval 0xE2 Failed: Input parameter is out of range.
      */
-    uint8_t StaticRingBuf_Create(StaticRingBuf* rbuf, const STARB_CAPTYPE _capacity);
-
-    /** @brief   Release the StaticRingBuf instance.
-     *  @details Reset the attributes of the StaticRingBuf instance, release dynamically created buffer memory space.
-     *
-     *  @param[inout] rbuf The StaticRingBuf instance to be released.
-     */
-    void StaticRingBuf_Release(StaticRingBuf* rbuf);
+    uint8_t StaticRingBuf_Init(StaticRingBuf* rbuf, const STARB_STOSZTP total_buffer_size, byte* _buffer);
 
     /** @brief Get writing capacity of the StaticRingBuf instance.
      *
